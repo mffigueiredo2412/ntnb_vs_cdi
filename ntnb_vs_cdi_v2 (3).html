@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTN-B vs CDI — Comparação Histórica 2005–2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#07090f; --panel:#0d1117; --panel2:#111a27; --border:#1e2d45;
+  --ntnb:#34d399; --cdi-a:#fb923c; --cdi-b:#38bdf8; --amber:#f59e0b;
+  --text:#dde4ef; --muted:#4e6070; --accent:#38bdf8;
+  --pos:#4ade80; --neg:#f87171;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;padding:36px 48px 60px;min-height:100vh;}
+/* ── MASTHEAD ── */
+.masthead{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.ey{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+.ey::before{content:'';width:16px;height:1px;background:var(--accent);display:inline-block;}
+h1{font-family:'Syne',sans-serif;font-size:25px;font-weight:800;color:#f0f8ff;letter-spacing:-.02em;line-height:1.15;}
+h1 em{color:var(--ntnb);font-style:normal;}
+.sub{margin-top:6px;font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;}
+.leg-wrap{display:flex;flex-direction:column;gap:5px;align-items:flex-end;}
+.leg{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* ── FONTE BADGE ── */
+.fbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:6px;padding:6px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.05em;margin-bottom:22px;}
+.fbadge span{color:var(--muted);}
+/* ── PAINEL GRÁFICO ── */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:22px;}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 24px 14px;border-bottom:1px solid var(--border);gap:16px;}
+.pey{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
+.ea{color:var(--ntnb);}.eb{color:var(--accent);}
+.pt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+.pd{margin-top:3px;font-size:11px;color:var(--muted);line-height:1.5;}
+.pf{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:5px 11px;border-radius:20px;letter-spacing:.03em;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.fa{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);color:var(--ntnb);}
+.fb{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2);color:var(--accent);}
+/* ── KPIS ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.kpi{background:var(--panel2);padding:13px 18px;}
+.kl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.kv{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:500;letter-spacing:-.02em;}
+.ks{font-size:9.5px;color:var(--muted);margin-top:2px;}
+.vg{color:var(--ntnb);}.va{color:var(--cdi-a);}.vb{color:var(--accent);}.vp{color:var(--pos);}.vn{color:var(--neg);}.vo{color:var(--amber);}
+/* ── CHART ── */
+.cb{padding:20px 22px 4px;position:relative;height:320px;}
+.sw{padding:0 22px 16px;position:relative;height:175px;}
+.sl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--border);padding-top:9px;margin-bottom:7px;}
+/* ── INSIGHTS 2-col ── */
+.ins2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px;}
+.ip{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.it{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.yr{display:grid;grid-template-columns:34px 1fr 50px;align-items:center;gap:8px;margin-bottom:5px;}
+.yl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-align:right;}
+.bt{height:13px;background:var(--panel2);border-radius:3px;overflow:hidden;}
+.bf{height:100%;border-radius:3px;}
+.bp{background:linear-gradient(90deg,rgba(52,211,153,.2),rgba(52,211,153,.6));}
+.bn{background:linear-gradient(90deg,rgba(248,113,113,.2),rgba(248,113,113,.6));}
+.yv{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:right;}
+/* ── CONTEXTO ATUAL ── */
+.ctx{background:var(--panel);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:22px;}
+.cth{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 24px 14px;border-bottom:1px solid var(--border);gap:16px;}
+.ctey{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);margin-bottom:4px;}
+.ctt{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+.ctd{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.ctbadge{font-family:'JetBrains Mono',monospace;font-size:9.5px;padding:5px 12px;border-radius:20px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);color:var(--amber);white-space:nowrap;flex-shrink:0;}
+.ctkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.ctbody{padding:20px 24px 24px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+/* ciclos */
+.seclbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:11px;}
+.cr{display:grid;grid-template-columns:170px 1fr 50px;align-items:center;gap:8px;margin-bottom:8px;}
+.cl{font-size:10.5px;color:var(--muted);}
+/* percentil */
+.pct-wrap{margin-top:6px;}
+.pct-bar-outer{height:22px;background:var(--panel2);border-radius:5px;position:relative;margin-top:16px;margin-bottom:36px;}
+.pct-bar-fill{height:100%;border-radius:5px 0 0 5px;background:linear-gradient(90deg,rgba(52,211,153,.1),rgba(52,211,153,.38));}
+.pct-pin{position:absolute;top:-6px;height:34px;width:3px;background:var(--amber);border-radius:2px;transform:translateX(-50%);}
+.pct-pin-lbl{position:absolute;top:28px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);white-space:nowrap;}
+.pct-axis{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:5px;}
+.pct-note{font-size:11.5px;color:var(--text);line-height:1.65;margin-top:14px;}
+.pct-note strong{color:var(--amber);}
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding-top:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;}
+.fn{font-size:10px;color:var(--muted);line-height:1.75;max-width:720px;}
+.fs{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#1e3450;letter-spacing:.1em;text-transform:uppercase;text-align:right;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div>
+    <div class="ey">Análise · Renda Fixa · 2005–2025</div>
+    <h1>NTN-B <em>~7 anos duration</em> vs CDI<br>Comparação em Base Correta</h1>
+    <div class="sub">Duas abordagens para comparar o título indexado ao IPCA com o CDI ao longo de 21 anos.<br>Juro real contratado × inflação realizada × CDI efetivo — dados oficiais STN / Bacen.</div>
+  </div>
+  <div class="leg-wrap">
+    <div class="leg"><div class="dot" style="background:var(--ntnb)"></div>NTN-B taxa real IPCA+ (Tesouro/STN)</div>
+    <div class="leg"><div class="dot" style="background:var(--cdi-a)"></div>CDI nominal aa (Bacen)</div>
+    <div class="leg"><div class="dot" style="background:var(--accent)"></div>CDI real deflacionado — Fisher</div>
+    <div class="leg"><div class="dot" style="background:#a78bfa"></div>IPCA realizado aa (IBGE)</div>
+  </div>
+</div>
+
+<div class="fbadge">✓ DADOS OFICIAIS&nbsp;<span>NTN-B c/ Juros Semestrais ~7a duration · Tesouro Transparente / STN · precotaxatesourodireto.csv · média diária por ano</span></div>
+
+<!-- ══ PAINEL A ══════════════════════════════════════════════════════════ -->
+<div class="panel">
+  <div class="ph">
+    <div>
+      <div class="pey ea">Opção A — Base Nominal · "Retorno bruto no bolso"</div>
+      <div class="pt">NTN-B nominal total &nbsp;vs&nbsp; CDI nominal</div>
+      <div class="pd">NTN-B convertida para retorno nominal: quanto um real vira em reais correntes</div>
+    </div>
+    <div class="pf fa">NTN-B nom. = (1 + juro real) × (1 + IPCA) − 1</div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kl">Média NTN-B nominal 21a</div><div class="kv vg" id="a1">—</div><div class="ks">aa nominal total</div></div>
+    <div class="kpi"><div class="kl">Média CDI 21a</div><div class="kv va" id="a2">—</div><div class="ks">aa nominal</div></div>
+    <div class="kpi"><div class="kl">NTN-B &gt; CDI em</div><div class="kv vp" id="a3">—</div><div class="ks">dos 21 anos</div></div>
+    <div class="kpi"><div class="kl">Maior vantagem</div><div class="kv vp" id="a4">—</div><div class="ks" id="a4y">—</div></div>
+  </div>
+  <div class="cb"><canvas id="chartA"></canvas></div>
+  <div class="sw">
+    <div class="sl">Δ NTN-B nominal − CDI nominal (pp) &nbsp;·&nbsp; verde = NTN-B venceu &nbsp;·&nbsp; vermelho = CDI venceu</div>
+    <canvas id="spreadA"></canvas>
+  </div>
+</div>
+
+<!-- ══ PAINEL B ══════════════════════════════════════════════════════════ -->
+<div class="panel">
+  <div class="ph">
+    <div>
+      <div class="pey eb">Opção B — Base Real (Fisher) · "Juro acima da inflação"</div>
+      <div class="pt">NTN-B juro real &nbsp;vs&nbsp; CDI real deflacionado</div>
+      <div class="pd">CDI deflacionado pelo IPCA. CDI negativo = Selic abaixo da inflação (2020–2021)</div>
+    </div>
+    <div class="pf fb">CDI real = (1 + CDI) ÷ (1 + IPCA) − 1</div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><div class="kl">Média NTN-B real 21a</div><div class="kv vg" id="b1">—</div><div class="ks">aa real IPCA+</div></div>
+    <div class="kpi"><div class="kl">Média CDI real 21a</div><div class="kv vb" id="b2">—</div><div class="ks">aa real (Fisher)</div></div>
+    <div class="kpi"><div class="kl">NTN-B &gt; CDI real em</div><div class="kv vp" id="b3">—</div><div class="ks">dos 21 anos</div></div>
+    <div class="kpi"><div class="kl">CDI real mínimo</div><div class="kv vn">−5,12%</div><div class="ks">2021 · Selic &lt; IPCA</div></div>
+  </div>
+  <div class="cb"><canvas id="chartB"></canvas></div>
+  <div class="sw">
+    <div class="sl">Δ NTN-B real − CDI real (pp) &nbsp;·&nbsp; verde = NTN-B venceu &nbsp;·&nbsp; vermelho = CDI venceu</div>
+    <canvas id="spreadB"></canvas>
+  </div>
+</div>
+
+<!-- ══ INSIGHTS ══════════════════════════════════════════════════════════ -->
+<div class="ins2">
+  <div class="ip">
+    <div class="it"><div class="dot" style="background:var(--ntnb)"></div>Top spreads — NTN-B vs CDI nominal</div>
+    <div id="top-a"></div>
+  </div>
+  <div class="ip">
+    <div class="it"><div class="dot" style="background:var(--accent)"></div>Top spreads — NTN-B vs CDI real (Fisher)</div>
+    <div id="top-b"></div>
+  </div>
+</div>
+
+<!-- ══ CONTEXTO ATUAL ═════════════════════════════════════════════════════ -->
+<div class="ctx">
+  <div class="cth">
+    <div>
+      <div class="ctey">Contexto histórico · Taxa atual vs média 21 anos</div>
+      <div class="ctt">NTN-B ~7 anos: onde estamos hoje?</div>
+      <div class="ctd">Taxa compra manhã 11/03/2026 — NTN-B ago/2032 (duration 6,4 anos) — comparada à série histórica 2005–2025</div>
+    </div>
+    <div class="ctbadge">⬆ 85º PERCENTIL HISTÓRICO</div>
+  </div>
+  <div class="ctkpis">
+    <div class="kpi"><div class="kl">Taxa atual · 11/03/2026</div><div class="kv vo">IPCA+7,73%</div><div class="ks">NTN-B ago/2032 · 6,4a duration</div></div>
+    <div class="kpi"><div class="kl">Média histórica 2005–2025</div><div class="kv vg">IPCA+5,98%</div><div class="ks">21 anos · dados oficiais STN</div></div>
+    <div class="kpi"><div class="kl">Prêmio vs média histórica</div><div class="kv vp">+1,75 pp</div><div class="ks">taxa atual acima da média</div></div>
+    <div class="kpi"><div class="kl">Só mais caro em</div><div class="kv vn">15% do tempo</div><div class="ks">principalmente 2005–2008</div></div>
+  </div>
+  <div class="ctbody">
+    <div>
+      <div class="seclbl">Média real NTN-B por ciclo econômico</div>
+      <div id="ciclos"></div>
+    </div>
+    <div class="pct-wrap">
+      <div class="seclbl">Distribuição histórica de taxas 2005–2025 · posição atual</div>
+      <!-- barra de percentil sem labels flutuantes -->
+      <div style="position:relative;margin-bottom:6px;">
+        <!-- trilho -->
+        <div style="height:22px;background:var(--panel2);border-radius:5px;overflow:hidden;">
+          <div style="height:100%;width:85%;border-radius:5px 0 0 5px;background:linear-gradient(90deg,rgba(52,211,153,.1),rgba(52,211,153,.38));"></div>
+        </div>
+        <!-- pin média (50%) -->
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:22px;background:rgba(52,211,153,0.55);border-radius:2px;"></div>
+        <!-- pin hoje (85%) -->
+        <div style="position:absolute;top:0;left:85%;transform:translateX(-50%);width:3px;height:22px;background:#f59e0b;border-radius:2px;"></div>
+      </div>
+      <!-- eixo inferior -->
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--muted);margin-bottom:8px;">
+        <span>1,90% mín</span><span>4%</span><span>6%</span><span>8%</span><span>11% máx</span>
+      </div>
+      <!-- legenda dos pins -->
+      <div style="display:flex;gap:20px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:10px;height:3px;background:rgba(52,211,153,0.55);border-radius:2px;flex-shrink:0;"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ntnb);">5,98% · média histórica (43º pct.)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:10px;height:3px;background:#f59e0b;border-radius:2px;flex-shrink:0;"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#f59e0b;">7,73% · hoje (86º pct.)</span>
+        </div>
+      </div>
+      <div class="pct-note">
+        A taxa atual de <strong>IPCA+7,73%</strong> está no <strong>86º percentil</strong> das observações desde 2005 — a NTN-B esteve mais cara em apenas <strong>15% do tempo</strong>, concentrado em 2005–2008 quando o prêmio de risco Brasil era estruturalmente mais alto. O patamar atual reflete fiscal deteriorado e Selic elevada e representa uma entrada historicamente atrativa para o investidor de longo prazo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="fn">
+    <strong style="color:var(--text)">Nota:</strong> * 2026 parcial (jan–11/mar): valores anualizados pro rata · CDI acumulado 2,68% → 14,99% aa · IPCA acumulado jan–fev 1,03% → 6,56% aa (jan 0,33% + fev 0,70%) · NTN-B taxa média diária já em base aa.<br><strong style="color:var(--text)">Fontes:</strong> STN / Tesouro Transparente — <em>precotaxatesourodireto.csv</em> (taxa compra manhã, NTN-B c/ Juros Semestrais, duration ~7 anos, média das observações diárias de cada ano) · IBGE (IPCA realizado aa) · Bacen-SGS (CDI efetivo aa)<br>
+    <strong style="color:var(--text)">Metodologia:</strong> Para cada dia útil selecionado o título com duration residual mais próxima de 7 anos (3–15 anos disponíveis) ·
+    <strong style="color:var(--text)">Fórmulas:</strong> Base nominal = (1+real)×(1+IPCA)−1 · Base real = (1+CDI)÷(1+IPCA)−1 · Percentil calculado sobre 5.289 obs. diárias 2005–2025
+  </div>
+  <div class="fs">Carteira Ex-Prev<br>Referência Mar / 2026<br>v 3.1 · dados oficiais</div>
+</footer>
+
+<script>
+// ── DADOS (oficiais STN + Bacen + IBGE) ──────────────────────────────
+const anos  = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,"2026*"];
+const ntnbR = [9.04,9.08,7.07,8.15,6.85,6.28,5.98,4.22,4.71,5.99,6.70,6.27,5.13,4.97,3.40,2.66,3.93,5.70,5.57,6.16,7.65,7.66];
+const cdiN  = [18.91,14.78,11.98,12.67,9.90,9.78,11.63,8.39,8.23,10.89,13.21,13.98,10.02,6.36,5.76,2.77,4.43,12.41,13.16,10.88,14.32,14.99];
+const ipca  = [5.69,3.14,4.46,5.90,4.31,5.91,6.50,5.84,5.91,6.41,10.67,6.29,2.95,3.75,4.31,4.52,10.06,5.78,4.62,4.83,4.26,6.56];
+
+const ntnbN = anos.map((_,i) => +((( 1+ntnbR[i]/100)*(1+ipca[i]/100)-1)*100).toFixed(2));
+const cdiRl = anos.map((_,i) => +(((1+cdiN[i]/100)/(1+ipca[i]/100)-1)*100).toFixed(2));
+const diffA = anos.map((_,i) => +(ntnbN[i]-cdiN[i]).toFixed(2));
+const diffB = anos.map((_,i) => +(ntnbR[i]-cdiRl[i]).toFixed(2));
+const avg   = a => +(a.slice(0,-1).reduce((s,v)=>s+v)/(a.length-1)).toFixed(2); // exclui 2026* (parcial)
+
+// KPIs
+const winA = diffA.filter(d=>d>0).length;
+const winB = diffB.filter(d=>d>0).length;
+const maxDA = Math.max(...diffA);
+const maxDA_yr = anos[diffA.indexOf(maxDA)];
+document.getElementById('a1').textContent = avg(ntnbN)+'%';
+document.getElementById('a2').textContent = avg(cdiN)+'%';
+document.getElementById('a3').textContent = winA+' de 21';
+document.getElementById('a4').textContent = '+'+maxDA.toFixed(1)+' pp';
+document.getElementById('a4y').textContent = maxDA_yr;
+document.getElementById('b1').textContent = avg(ntnbR)+'%';
+document.getElementById('b2').textContent = avg(cdiRl)+'%';
+document.getElementById('b3').textContent = winB+' de 21';
+
+// ── CHART HELPERS ────────────────────────────────────────────────────
+const GC   = 'rgba(30,45,69,0.8)';
+const MONO = {family:'JetBrains Mono', size:10};
+const DARK = '#07090f';
+
+function grad(ctx, hex) {
+  const g = ctx.createLinearGradient(0,0,0,400);
+  g.addColorStop(0, hex+'28'); g.addColorStop(1, hex+'00');
+  return g;
+}
+function barC(arr) {
+  return arr.map((v,i) => {
+    const last = i === arr.length - 1;
+    if (last) return v>=0 ? 'rgba(74,222,128,0.30)' : 'rgba(248,113,113,0.30)';
+    return v>=0 ? 'rgba(74,222,128,0.68)' : 'rgba(248,113,113,0.68)';
+  });
+}
+function borderC(arr) {
+  return arr.map((v,i) => {
+    const last = i === arr.length - 1;
+    if (last) return v>=0 ? 'rgba(74,222,128,0.90)' : 'rgba(248,113,113,0.90)';
+    return 'transparent';
+  });
+}
+function tt(dArr) {
+  return {
+    backgroundColor:'#0d1117', borderColor:'#1e2d45', borderWidth:1,
+    titleColor:'#4e6070', titleFont:MONO, bodyColor:'#dde4ef', bodyFont:MONO, padding:12,
+    callbacks:{
+      title: it => 'Ano ' + it[0].label + (it[0].label==='2026*' ? ' (parcial · pro rata aa)' : ''),
+      label: it => it.datasetIndex >= 2 ? null : '  '+it.dataset.label+': '+it.raw.toFixed(2)+'%',
+      afterBody: it => {
+        const i = it[0].dataIndex, d = dArr[i], s = d>=0?'+':'';
+        return ['', '  Δ: '+s+d.toFixed(2)+' pp — '+(d>=0?'NTN-B venceu':'CDI venceu')];
+      }
+    }
+  };
+}
+
+// ── CHART A ─────────────────────────────────────────────────────────
+const ctxA = document.getElementById('chartA').getContext('2d');
+new Chart(ctxA, {
+  type:'line',
+  data:{ labels:anos, datasets:[
+    {label:'NTN-B nominal', data:ntnbN, borderColor:'#34d399', backgroundColor:grad(ctxA,'#34d399'), borderWidth:2.2, fill:true, tension:0.35, pointBackgroundColor:'#34d399', pointBorderColor:DARK, pointBorderWidth:2, pointRadius:4, pointHoverRadius:7, segment:{borderDash:ctx=>ctx.p1DataIndex===ntnbN.length-1?[6,4]:undefined}},
+    {label:'CDI nominal',   data:cdiN,  borderColor:'#fb923c', backgroundColor:grad(ctxA,'#fb923c'), borderWidth:2.2, fill:true, tension:0.35, pointBackgroundColor:'#fb923c', pointBorderColor:DARK, pointBorderWidth:2, pointRadius:4, pointHoverRadius:7, segment:{borderDash:ctx=>ctx.p1DataIndex===cdiN.length-1?[6,4]:undefined}},
+    {label:'IPCA aa',       data:ipca,  borderColor:'rgba(167,139,250,0.4)', backgroundColor:'transparent', borderWidth:1.2, borderDash:[4,4], fill:false, tension:0.35, pointRadius:0, pointHoverRadius:4},
+    {label:'_mN', data:anos.map(()=>avg(ntnbN)), borderColor:'rgba(52,211,153,0.2)', backgroundColor:'transparent', borderWidth:1, borderDash:[6,5], fill:false, pointRadius:0},
+    {label:'_mC', data:anos.map(()=>avg(cdiN)),  borderColor:'rgba(251,146,60,0.2)',  backgroundColor:'transparent', borderWidth:1, borderDash:[6,5], fill:false, pointRadius:0},
+  ]},
+  options:{
+    responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+    layout:{padding:{top:10}},
+    plugins:{
+      legend:{labels:{color:'#4e6070',font:MONO,boxWidth:10,padding:16,filter:it=>!it.text.startsWith('_')}},
+      tooltip:tt(diffA)
+    },
+    scales:{
+      x:{ticks:{color:'#4e6070',font:MONO},grid:{color:GC}},
+      y:{min:0,max:24,ticks:{color:'#4e6070',font:MONO,callback:v=>v+'%'},grid:{color:GC}}
+    }
+  }
+});
+
+// ── SPREAD A ────────────────────────────────────────────────────────
+const ctxSA = document.getElementById('spreadA').getContext('2d');
+new Chart(ctxSA, {
+  type:'bar',
+  data:{labels:anos, datasets:[{data:diffA, backgroundColor:barC(diffA), borderColor:borderC(diffA), borderWidth:2, borderRadius:3, barPercentage:0.65}]},
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    layout:{padding:{top:4}},
+    plugins:{legend:{display:false}, tooltip:{
+      backgroundColor:'#0d1117', borderColor:'#1e2d45', borderWidth:1,
+      titleColor:'#4e6070', titleFont:MONO, bodyColor:'#dde4ef', bodyFont:MONO, padding:10,
+      callbacks:{title:i=>'Ano '+i[0].label, label:i=>{const v=i.raw,s=v>=0?'+':''; return '  '+s+v.toFixed(2)+' pp — '+(v>=0?'NTN-B acima':'CDI acima');}}
+    }},
+    scales:{
+      x:{ticks:{color:'#4e6070',font:{family:'JetBrains Mono',size:8},maxRotation:45,minRotation:45,autoSkip:false},grid:{display:false}},
+      y:{ticks:{color:'#4e6070',font:{family:'JetBrains Mono',size:9},callback:v=>(v>0?'+':'')+v+'pp'},grid:{color:GC}}
+    }
+  }
+});
+
+// ── CHART B ─────────────────────────────────────────────────────────
+const ctxB = document.getElementById('chartB').getContext('2d');
+new Chart(ctxB, {
+  type:'line',
+  data:{labels:anos, datasets:[
+    {label:'NTN-B juro real IPCA+', data:ntnbR, borderColor:'#34d399', backgroundColor:grad(ctxB,'#34d399'), borderWidth:2.2, fill:true, tension:0.35, pointBackgroundColor:'#34d399', pointBorderColor:DARK, pointBorderWidth:2, pointRadius:4, pointHoverRadius:7, segment:{borderDash:ctx=>ctx.p1DataIndex===ntnbR.length-1?[6,4]:undefined}},
+    {label:'CDI real (Fisher)',     data:cdiRl, borderColor:'#38bdf8', backgroundColor:grad(ctxB,'#38bdf8'), borderWidth:2.2, fill:true, tension:0.35, pointBackgroundColor:'#38bdf8', pointBorderColor:DARK, pointBorderWidth:2, pointRadius:4, pointHoverRadius:7, segment:{borderDash:ctx=>ctx.p1DataIndex===cdiRl.length-1?[6,4]:undefined}},
+    {label:'_zero', data:anos.map(()=>0), borderColor:'rgba(255,255,255,0.08)', backgroundColor:'transparent', borderWidth:1, fill:false, pointRadius:0},
+    {label:'_mNR', data:anos.map(()=>avg(ntnbR)), borderColor:'rgba(52,211,153,0.2)', backgroundColor:'transparent', borderWidth:1, borderDash:[6,5], fill:false, pointRadius:0},
+    {label:'_mCR', data:anos.map(()=>avg(cdiRl)), borderColor:'rgba(56,189,248,0.2)', backgroundColor:'transparent', borderWidth:1, borderDash:[6,5], fill:false, pointRadius:0},
+  ]},
+  options:{
+    responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+    layout:{padding:{top:10}},
+    plugins:{
+      legend:{labels:{color:'#4e6070',font:MONO,boxWidth:10,padding:16,filter:it=>!it.text.startsWith('_')}},
+      tooltip:tt(diffB)
+    },
+    scales:{
+      x:{ticks:{color:'#4e6070',font:MONO},grid:{color:GC}},
+      y:{min:-7,max:14,ticks:{color:'#4e6070',font:MONO,callback:v=>v+'%'},grid:{color:GC}}
+    }
+  }
+});
+
+// ── SPREAD B ────────────────────────────────────────────────────────
+const ctxSB = document.getElementById('spreadB').getContext('2d');
+new Chart(ctxSB, {
+  type:'bar',
+  data:{labels:anos, datasets:[{data:diffB, backgroundColor:barC(diffB), borderColor:borderC(diffB), borderWidth:2, borderRadius:3, barPercentage:0.65}]},
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    layout:{padding:{top:4}},
+    plugins:{legend:{display:false}, tooltip:{
+      backgroundColor:'#0d1117', borderColor:'#1e2d45', borderWidth:1,
+      titleColor:'#4e6070', titleFont:MONO, bodyColor:'#dde4ef', bodyFont:MONO, padding:10,
+      callbacks:{title:i=>'Ano '+i[0].label, label:i=>{const v=i.raw,s=v>=0?'+':''; return '  '+s+v.toFixed(2)+' pp — '+(v>=0?'NTN-B acima':'CDI acima');}}
+    }},
+    scales:{
+      x:{ticks:{color:'#4e6070',font:{family:'JetBrains Mono',size:8},maxRotation:45,minRotation:45,autoSkip:false},grid:{display:false}},
+      y:{ticks:{color:'#4e6070',font:{family:'JetBrains Mono',size:9},callback:v=>(v>0?'+':'')+v+'pp'},grid:{color:GC}}
+    }
+  }
+});
+
+// ── TOP ANOS ────────────────────────────────────────────────────────
+function renderTop(id, dArr, n=7) {
+  const pairs = anos.map((a,i)=>[a,dArr[i]]).sort((a,b)=>b[1]-a[1]);
+  const top = pairs.slice(0,n);
+  const absMax = Math.max(...top.map(x=>Math.abs(x[1])));
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  top.forEach(([ano,val]) => {
+    const pct = (Math.abs(val)/absMax*100).toFixed(0);
+    const pos = val >= 0;
+    const d = document.createElement('div');
+    d.className = 'yr';
+    d.innerHTML =
+      '<div class="yl">'+ano+'</div>'+
+      '<div class="bt"><div class="bf '+(pos?'bp':'bn')+'" style="width:'+pct+'%"></div></div>'+
+      '<div class="yv '+(pos?'vp':'vn')+'">'+(val>0?'+':'')+val.toFixed(1)+'pp</div>';
+    el.appendChild(d);
+  });
+}
+renderTop('top-a', diffA);
+renderTop('top-b', diffB);
+
+// ── CICLOS ─────────────────────────────────────────────────────────
+const ciclos = [
+  {n:'2005–2008 · pré-crise global',   v:8.34},
+  {n:'2009–2012 · pós-crise / queda',  v:5.84},
+  {n:'2013–2016 · ciclo fiscal',       v:5.92},
+  {n:'2017–2020 · nova âncora',        v:4.04},
+  {n:'2021–2025 · pós-pandemia',       v:5.81},
+  {n:'Hoje · 17/03/2026',              v:7.73, destaque:true},
+];
+const maxV = Math.max(...ciclos.map(c=>c.v));
+const elC = document.getElementById('ciclos');
+ciclos.forEach(c => {
+  const pct = (c.v/maxV*100).toFixed(0);
+  const d = document.createElement('div');
+  d.className = 'cr';
+  const corLabel = c.destaque ? 'color:var(--amber);font-weight:500' : '';
+  const bgFill   = c.destaque
+    ? 'background:linear-gradient(90deg,rgba(245,158,11,.2),rgba(245,158,11,.65))'
+    : 'background:linear-gradient(90deg,rgba(52,211,153,.18),rgba(52,211,153,.55))';
+  const corVal   = c.destaque ? 'color:var(--amber)' : 'color:var(--ntnb)';
+  d.innerHTML =
+    '<div class="cl" style="'+corLabel+'">'+c.n+'</div>'+
+    '<div class="bt"><div class="bf" style="width:'+pct+'%;'+bgFill+'"></div></div>'+
+    '<div class="yv" style="'+corVal+'">'+c.v.toFixed(2)+'%</div>';
+  elC.appendChild(d);
+});
+</script>
+</body>
+</html>
